@@ -33,8 +33,9 @@ public class UserController {
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }*/
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/User/Login", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<JSONObject> authenticateUser(@RequestParam String u_name, @RequestParam String u_password) {
+        System.out.println("Authenticating User " + u_name);
         JSONObject ret = new JSONObject();
         User user = userService.getUserByNameAndPwd(u_name, u_password);
         if (user != null){
@@ -44,7 +45,23 @@ public class UserController {
             ret.put("u_mail", user.getU_mail());
             ret.put("u_role", user.getU_role());
         }
+        else{
+            ret.put("message", "Log in Failed");
+        }
         return new ResponseEntity<JSONObject>(ret, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/User/Reg", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JSONObject> addUser(@RequestBody User user){
+        System.out.println("Adding User " + user.getU_name());
+        JSONObject ret = new JSONObject();
+        user.setU_role(1);
+        Long u_id = userService.addUser(user);
+        if (u_id == null){
+            ret.put("message", "Registration Failed");
+            return new ResponseEntity<JSONObject>(ret, HttpStatus.OK);
+        }
+        return authenticateUser(user.getU_name(), user.getU_password());
     }
 
     @RequestMapping(value = "/")

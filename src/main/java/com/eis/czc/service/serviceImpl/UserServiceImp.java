@@ -55,8 +55,11 @@ public class UserServiceImp implements UserService {
     }
 
     public Long addUser(User u){
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        if (u_nameExists(u.getU_name())){
+            return null;
+        }
 
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<JSONObject> httpEntity=new HttpEntity<JSONObject>(userToJson(u), httpHeaders);
 
         JSONObject jsonGot = restTemplate.postForEntity(prefix+"User/", httpEntity, JSONObject.class).getBody();
@@ -81,10 +84,12 @@ public class UserServiceImp implements UserService {
                 HttpMethod.PUT, httpEntity, JSONObject.class);
     }
 
+
     private User jsonToUser(JSONObject jsonUser){
         return new User((Long) jsonUser.get("id"), jsonUser.getString("u_name"),
                 jsonUser.getString("u_mail"), jsonUser.getString("u_password"), (Integer) jsonUser.get("u_role"));
     }
+
     private JSONObject userToJson(User u){
         JSONObject jsonObject = new JSONObject();
         if (u.getU_id() != null){
@@ -95,5 +100,13 @@ public class UserServiceImp implements UserService {
         jsonObject.put("u_password", u.getU_password());
         jsonObject.put("u_role", u.getU_role());
         return jsonObject;
+    }
+
+    private boolean u_nameExists(String u_name){
+        HttpEntity<Object> httpEntity=new HttpEntity<Object>(httpHeaders);
+        JSONObject objRec = restTemplate.exchange(
+                prefix+"User/?User.u_name="+u_name,
+                HttpMethod.GET, httpEntity, JSONObject.class).getBody();
+        return !objRec.isEmpty();
     }
 }
