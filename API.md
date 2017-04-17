@@ -38,11 +38,11 @@ u_id and u_role is generated in back-end, front-end can fill them with 0.
 *request*
 ```
 {
-	"u_id":0,
-	"u_name":"tomcat"
-	"u_mail":"tom@xyz.com"
-	"u_password":"tompwd"
-	"u_role":0
+  "u_id":0,
+  "u_name":"tomcat"
+  "u_mail":"tom@xyz.com"
+  "u_password":"tompwd"
+  "u_role":0
 }
 ```
 
@@ -63,3 +63,29 @@ u_id and u_role is generated in back-end, front-end can fill them with 0.
 }
 ```
 
+/User/Logout POST
+---
+*request header*
+```
+User-Hash -> -893712911
+Username -> test_uname
+```
+
+*request body*
+```
+{}
+```
+
+*success response*
+```
+{
+  "message": "Logged out successfully"
+}
+```
+
+*failed response*
+```
+{
+  "message": "Please Log in First"
+}
+```

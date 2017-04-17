@@ -13,9 +13,16 @@ import java.util.Map;
 public class UserPool {
     private Map<String, User> userMap;
     private static final String salt = "9f0sdu>jp-523";
+    private static UserPool userPool = null;
 
-    public UserPool () {
+    private UserPool () {
         userMap = new HashMap<String, User>();
+    }
+
+    public static UserPool getInstance(){
+        if (userPool == null)
+            userPool = new UserPool();
+        return userPool;
     }
 
     /**
@@ -32,12 +39,23 @@ public class UserPool {
         return userMap.get(uname);
     }
 
-    public boolean validateUser(String uname, int hashCode){
+    /**
+     *
+     * @param uname u_name in http header
+     * @param hashCode u_hash in http header
+     * @return an User if valid, null otherwise
+     */
+    public User validateUser(String uname, Integer hashCode){
         if(userMap.containsKey(uname)){
-             Long uid = userMap.get(uname).getU_id();
-             if (hashCode == (uname + uid + salt).hashCode())
-                 return true;
+            User u = userMap.get(uname);
+            Long uid = u.getU_id();
+            if (hashCode == (uname + uid + salt).hashCode())
+                return u;
         }
-        return false;
+        return null;
+    }
+
+    public void userLogout(String u_name){
+        userMap.remove(u_name);
     }
 }

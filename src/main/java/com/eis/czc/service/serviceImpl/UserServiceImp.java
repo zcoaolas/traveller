@@ -31,7 +31,7 @@ public class UserServiceImp implements UserService {
     private static final String prefix= Parameter.PREFIX114;
 
     public User getUserById(Long id){
-        HttpEntity<Object> httpEntity=new HttpEntity<Object>(httpHeaders);
+        HttpEntity<Object> httpEntity=new HttpEntity<>(httpHeaders);
 
         JSONObject objRec = restTemplate.exchange(prefix+"User/" + id.toString(),
                 HttpMethod.GET, httpEntity, JSONObject.class).getBody();
@@ -66,15 +66,16 @@ public class UserServiceImp implements UserService {
         return jsonGot.isEmpty() ? null : (Long) jsonGot.get("id");
     }
 
-    public List<User> getUsers(){
+    public JSONObject getUsers(){
         JSONObject jsonRes = restTemplate.getForObject(prefix+"User/", JSONObject.class);
-        JSONArray jsonUsers = jsonRes.getJSONArray("User");
+        return jsonRes;
+        /*JSONArray jsonUsers = jsonRes.getJSONArray("User");
         List<User> userList = new ArrayList<User>();
         for (int i = 0; i < jsonUsers.size(); i++){
             JSONObject jsonU = (JSONObject) jsonUsers.get(i);
             userList.add(jsonToUser(jsonU));
         }
-        return userList;
+        return userList;*/
     }
 
     public void updateUser(User u){
@@ -83,7 +84,6 @@ public class UserServiceImp implements UserService {
         restTemplate.exchange(prefix+"User/" + u.getU_id().toString(),
                 HttpMethod.PUT, httpEntity, JSONObject.class);
     }
-
 
     private User jsonToUser(JSONObject jsonUser){
         return new User((Long) jsonUser.get("id"), jsonUser.getString("u_name"),

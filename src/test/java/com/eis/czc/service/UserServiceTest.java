@@ -45,7 +45,7 @@ public class UserServiceTest extends base.BaseTest {
 
     @Test
     public void getAllUsersTest(){
-        List<User> userList= userService.getUsers();
-        System.out.println(userList);
+        //List<User> userList= userService.getUsers();
+        //System.out.println(userList);
     }
 }
