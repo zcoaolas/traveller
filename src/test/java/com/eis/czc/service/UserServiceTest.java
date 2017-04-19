@@ -39,8 +39,8 @@ public class UserServiceTest extends base.BaseTest {
 
     @Test
     public void updateUserTest(){
-        User u= new User(1491273809543L, "name7", "7@liu.com", "pwd7", 0);
-        userService.updateUser(u);
+        //User u= new User(1491273809543L, "name7", "7@liu.com", "pwd7", 0);
+        //userService.updateUser(u);
     }
 
     @Test

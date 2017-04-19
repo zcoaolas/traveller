@@ -32,7 +32,7 @@ public class UserPool {
      */
     public int addUser(User u){
         userMap.put(u.getU_name(), u);
-        return (u.getU_name() + u.getU_id().toString() + salt).hashCode();
+        return (u.getU_name() + u.getId().toString() + salt).hashCode();
     }
 
     public User getUser(String uname){
@@ -48,7 +48,7 @@ public class UserPool {
     public User validateUser(String uname, Integer hashCode){
         if(userMap.containsKey(uname)){
             User u = userMap.get(uname);
-            Long uid = u.getU_id();
+            Long uid = u.getId();
             if (hashCode == (uname + uid + salt).hashCode())
                 return u;
         }

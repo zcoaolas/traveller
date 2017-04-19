@@ -56,11 +56,10 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers = addHeaderAttributes(headers);
         if (user != null){
+            ret = JSONObject.fromObject(user);
             int userHash = userPool.addUser(user);
             ret.put("u_hash", userHash);
-            ret.put("u_name", user.getU_name());
-            ret.put("u_mail", user.getU_mail());
-            ret.put("u_role", user.getU_role());
+            ret.put("u_password", "");
         }
         else{
             ret.put("message", "Log in Failed");
@@ -72,14 +71,16 @@ public class UserController {
     public ResponseEntity<JSONObject> addUser(@RequestBody User user){
         System.out.println("Adding User " + user.getU_name());
         JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+
         user.setU_role(1);
         Long u_id = userService.addUser(user);
         if (u_id == null){
             ret.put("message", "Registration Failed");
-            return new ResponseEntity<>(ret, HttpStatus.OK);
+            return new ResponseEntity<>(ret, headers, HttpStatus.OK);
         }
-        //return authenticateUser(user.getU_name(), user.getU_password());
-        return null;
+        return authenticateUser(user.getU_name(), user.getU_password());
     }
 
     @RequestMapping(value = "/User/Logout", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
@@ -87,13 +88,15 @@ public class UserController {
                                                  @RequestHeader("Username") String u_name){
         User u = userPool.validateUser(u_name, u_hash);
         JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
         if (u == null){
             ret.put("message", "Please Log in First");
-            return new ResponseEntity<>(ret, HttpStatus.OK);
+            return new ResponseEntity<>(ret, headers, HttpStatus.OK);
         }
         userPool.userLogout(u_name);
         ret.put("message", "Logged out successfully");
-        return new ResponseEntity<>(ret, HttpStatus.OK);
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/User", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
@@ -105,7 +108,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/")
-    public String getUser() {
+    public String indexPage() {
        return "index";
     }
 

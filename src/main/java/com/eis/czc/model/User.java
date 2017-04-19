@@ -18,14 +18,18 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private Long u_id;
+    private Long id;
     private String u_name;
     private String u_mail;
     private String u_password;
     private Integer u_role;
 
+    private String u_job;
+    private Integer u_gender;
+    private Integer u_age;
+
     public boolean hasRole(SystemRole role){
-        switch (role) {
+        /*switch (role) {
             case USER:
                 return (u_role & 0x1) != 0;
             case REVIEWER:
@@ -36,6 +40,7 @@ public class User implements Serializable {
                 return (u_role & 0x8) != 0;
             default:
                 return false;
-        }
+        }*/
+        return u_role >= role.getCharacter();
     }
 }

@@ -21,7 +21,7 @@ public class MvcConfiguration {
 	@Bean
 	public HttpHeaders getMultiValueMap(){
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-Type","application/json");
+		headers.add("Content-Type","application/json;charset=UTF-8");
 		return headers;
 	}
 }

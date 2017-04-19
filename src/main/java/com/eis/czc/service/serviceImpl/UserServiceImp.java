@@ -38,7 +38,7 @@ public class UserServiceImp implements UserService {
         if (objRec.isEmpty()){
             return null;
         }
-        return jsonToUser(objRec);
+        return (User)JSONObject.toBean(objRec, User.class);
     }
 
     public User getUserByNameAndPwd(String u_name, String u_pwd){
@@ -51,7 +51,8 @@ public class UserServiceImp implements UserService {
             return null;
         }
         JSONArray jArr = objRec.getJSONArray("User");
-        return jsonToUser((JSONObject)jArr.get(0));
+        JSONObject tmp = ((JSONObject)jArr.get(0));
+        return (User)JSONObject.toBean(tmp, User.class);
     }
 
     public Long addUser(User u){
@@ -59,8 +60,7 @@ public class UserServiceImp implements UserService {
             return null;
         }
 
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<JSONObject> httpEntity=new HttpEntity<JSONObject>(userToJson(u), httpHeaders);
+        HttpEntity<JSONObject> httpEntity=new HttpEntity<JSONObject>(JSONObject.fromObject(u), httpHeaders);
 
         JSONObject jsonGot = restTemplate.postForEntity(prefix+"User/", httpEntity, JSONObject.class).getBody();
         return jsonGot.isEmpty() ? null : (Long) jsonGot.get("id");
@@ -80,27 +80,27 @@ public class UserServiceImp implements UserService {
 
     public void updateUser(User u){
 
-        HttpEntity<Object> httpEntity=new HttpEntity<Object>(userToJson(u), httpHeaders);
-        restTemplate.exchange(prefix+"User/" + u.getU_id().toString(),
+        HttpEntity<Object> httpEntity=new HttpEntity<Object>(JSONObject.fromObject(u), httpHeaders);
+        restTemplate.exchange(prefix+"User/" + u.getId().toString(),
                 HttpMethod.PUT, httpEntity, JSONObject.class);
     }
 
-    private User jsonToUser(JSONObject jsonUser){
+    /*private User jsonToUser(JSONObject jsonUser){
         return new User((Long) jsonUser.get("id"), jsonUser.getString("u_name"),
                 jsonUser.getString("u_mail"), jsonUser.getString("u_password"), (Integer) jsonUser.get("u_role"));
-    }
+    }*/
 
-    private JSONObject userToJson(User u){
+    /*private JSONObject userToJson(User u){
         JSONObject jsonObject = new JSONObject();
-        if (u.getU_id() != null){
-            jsonObject.put("id", u.getU_id());
+        if (u.getId() != null){
+            jsonObject.put("id", u.getId());
         }
         jsonObject.put("u_name", u.getU_name());
         jsonObject.put("u_mail", u.getU_mail());
         jsonObject.put("u_password", u.getU_password());
         jsonObject.put("u_role", u.getU_role());
         return jsonObject;
-    }
+    }*/
 
     private boolean u_nameExists(String u_name){
         HttpEntity<Object> httpEntity=new HttpEntity<Object>(httpHeaders);
