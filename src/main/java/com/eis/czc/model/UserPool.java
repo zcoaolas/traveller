@@ -56,6 +56,8 @@ public class UserPool {
     }
 
     public void userLogout(String u_name){
-        userMap.remove(u_name);
+        if (userMap.containsKey(u_name)) {
+            userMap.remove(u_name);
+        }
     }
 }

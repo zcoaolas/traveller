@@ -4,17 +4,11 @@ package com.eis.czc.controller;
 import com.eis.czc.model.User;
 import com.eis.czc.model.UserPool;
 import com.eis.czc.service.UserService;
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by zcoaolas on 2017/4/4.
@@ -26,23 +20,6 @@ public class UserController {
 
     private UserPool userPool = UserPool.getInstance();
 
-    /*@RequestMapping(value = "/User/Login", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public ResponseEntity<JSONObject> authenticateUser(@RequestParam String u_name, @RequestParam String u_password) {
-        System.out.println("Authenticating User " + u_name);
-        JSONObject ret = new JSONObject();
-        User user = userService.getUserByNameAndPwd(u_name, u_password);
-        if (user != null){
-            int userHash = userPool.addUser(user);
-            ret.put("u_hash", userHash);
-            ret.put("u_name", user.getU_name());
-            ret.put("u_mail", user.getU_mail());
-            ret.put("u_role", user.getU_role());
-        }
-        else{
-            ret.put("message", "Log in Failed");
-        }
-        return new ResponseEntity<JSONObject>(ret, HttpStatus.OK);
-    }*/
 
     @RequestMapping(value = "/User/Login", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<JSONObject> authenticateUser(@RequestParam String u_name, @RequestParam String u_password) {
@@ -83,25 +60,41 @@ public class UserController {
     @RequestMapping(value = "/User/Logout", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<JSONObject> userLogout(@RequestHeader("User-Hash") Integer u_hash,
                                                  @RequestHeader("Username") String u_name){
+        System.out.println("User Try to Logout " + u_name);
         User u = userPool.validateUser(u_name, u_hash);
         JSONObject ret = new JSONObject();
         HttpHeaders headers = new HttpHeaders();
         headers = addHeaderAttributes(headers);
         if (u == null){
-            ret.put("message", "Please Log in First");
-            return new ResponseEntity<>(ret, headers, HttpStatus.OK);
+            return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
         }
         userPool.userLogout(u_name);
         ret.put("message", "Logged out successfully");
+        System.out.println(u_name + " logged out.");
         return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/User", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
-    public ResponseEntity<JSONObject> getAllUsers(@RequestHeader("User-Hash") Integer u_hash,
-                                                  @RequestHeader("Username") String u_name){
+    @RequestMapping(value = "/User", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<JSONObject> modifyUser(@RequestHeader("User-Hash") Integer u_hash,
+                                                  @RequestHeader("Username") String u_name, @RequestBody User user){
         User u = userPool.validateUser(u_name, u_hash);
-        //if (u == null || !u.hasRole(Syro))
-        return null;
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        if (u == null){
+            return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer user_role = u.getU_role();
+        Integer modified_role = user.getU_role();
+        if (user_role <  modified_role){
+            return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+        }
+        user.setU_password(userService.getUserById(user.getId()).getU_password());
+        userService.updateUser(user);
+        userPool.userLogout(user.getU_name());
+
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/")

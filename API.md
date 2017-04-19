@@ -101,6 +101,43 @@ Username -> test_uname
 }
 ```
 
+/User PUT
+---
+> Change personal info of an account  
+~ But you cannot change password by this API  
+
+*request header*
+```
+User-Hash -> -893712911
+Username -> test_uname
+```
+
+*request body*
+```
+{
+  "id": 1492495616439,
+  "u_age": 0,
+  "u_gender": 0,
+  "u_job": "",
+  "u_mail": "jyc@jyc.cn",
+  "u_name": "jiayangchen",
+  "u_password": "",
+  "u_role": 7,
+  "u_hash": -1906674918
+}
+```
+
+*success response*
+```
+{}
+```
+
+*failed response*
+```
+401 Unauthorized
+{}
+```
+
 /Article POST
 ---
 > Write and submit a new article.
