@@ -1,8 +1,5 @@
 ## Traveller API
 
-User
-===
-
 /User/Login GET 
 ---
 > Authenticate the user.
@@ -177,4 +174,68 @@ Username -> test_uname
 ```
 401 Unauthorized
 {}
+```
+
+/Article GET
+---
+> GET all articles that you are able to read  
+
+>ADMIN: all articles  
+EDITOR: articles that you should edit or review  
+REVIEWER: articles that you should review  
+EVERYONE: articles you wrote  
+
+*success response*
+```
+{
+  "Article": [
+    {
+      "id": 1492605062619,
+      "ar_content": "当第一只角马出现时，我们立刻惊呼了起来。",
+      "ar_title": "与一万只角马迎面相逢(二）",
+      "ar_category": "自然风光",
+      "ar_author": {
+        "id": 1492492007079,
+        "u_name": "chenzhan",
+        "u_mail": "cz@cz.com",
+        "u_password": "",
+        "u_role": 4
+      },
+      "ar_reviewer": [
+        {
+          "id": 1492443754057,
+          "u_name": "junmingcao",
+          "u_mail": "mail@qq.com",
+          "u_password": "",
+          "u_role": 8
+        }
+      ],
+      "ar_editor": {
+        "id": 1492495616439,
+        "u_name": "jiayangchen",
+        "u_mail": "jyc@jyc.com",
+        "u_password": "",
+        "u_role": 7
+      },
+      "ar_time_list": [
+        {
+          "id": 1492605058905,
+          "ar_time": "2017-04-19 20:31:00.004"
+        }
+      ],
+      "ar_url_list": [
+        {
+          "id": 1492605058672,
+          "ar_url": "https://img3.doubanio.com/view/note/large/public/p38270091.jpg"
+        },
+        {
+          "id": 1492605058793,
+          "ar_url": "https://img1.doubanio.com/view/note/large/public/p38269988.jpg"
+        }
+      ],
+      "ar_tag_list": [],
+      "ar_review_list": []
+    }
+  ]
+}
 ```

@@ -9,10 +9,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,11 +110,12 @@ public class UserController {
     }
 
 
-    private HttpHeaders addHeaderAttributes (HttpHeaders headers){
+    public static HttpHeaders addHeaderAttributes (HttpHeaders headers){
         headers.add("Access-Control-Allow-Credentials", "true");
         headers.add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, passwd");
         headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         headers.add("Access-Control-Allow-Origin", "*");
+        headers.add("Content-Type","application/json;charset=UTF-8");
         return headers;
     }
 }
