@@ -97,15 +97,22 @@ public class UserController {
         return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 
+    @RequestMapping(value = {"/User", "/User/Logout", "/User/Reg"}, method = RequestMethod.OPTIONS)
+    public ResponseEntity<JSONObject> supportOptions() {
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<>(ret, addHeaderAttributes(headers), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/")
     public String indexPage() {
-       return "index";
+        return "index";
     }
 
 
     public static HttpHeaders addHeaderAttributes (HttpHeaders headers){
         headers.add("Access-Control-Allow-Credentials", "true");
-        headers.add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, passwd");
+        headers.add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, passwd, User-Hash, Username");
         headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         headers.add("Access-Control-Allow-Origin", "*");
         headers.add("Content-Type","application/json;charset=UTF-8");

@@ -15,6 +15,8 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.eis.czc.controller.UserController.addHeaderAttributes;
+
 /**
  * Created by zcoaolas on 2017/4/16.
  */
@@ -62,7 +64,7 @@ public class ArticleController {
 
         JSONObject jsonGot = articleService.addArticle(article);
 
-        return new ResponseEntity<>(jsonGot, UserController.addHeaderAttributes(headers), HttpStatus.OK);
+        return new ResponseEntity<>(jsonGot, addHeaderAttributes(headers), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/Article", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
@@ -107,11 +109,29 @@ public class ArticleController {
                 }
             }
         }
+        //TODO add articles that published
         ret.put("Article", filteredArticles);
-        return new ResponseEntity<>(ret, UserController.addHeaderAttributes(headers), HttpStatus.OK);
+        return new ResponseEntity<>(ret, addHeaderAttributes(headers), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/Article", method = RequestMethod.PUT, produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<JSONObject> putArticle(@RequestHeader("User-Hash") Integer u_hash, @RequestHeader("Username") String u_name,
+                                                 @RequestBody Article article) {
+        User u = userPool.validateUser(u_name, u_hash);
+        JSONObject ret = new JSONObject();
+        if (u == null) return new ResponseEntity<>(ret, HttpStatus.UNAUTHORIZED);
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        // TODO
+        return null;
+    }
 
+    @RequestMapping(value = {"/Article"}, method = RequestMethod.OPTIONS)
+    public ResponseEntity<JSONObject> supportOptions() {
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<>(ret, addHeaderAttributes(headers), HttpStatus.OK);
+    }
 
 
     private boolean shouldReview(JSONObject anArticle, String username){

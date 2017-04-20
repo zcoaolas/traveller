@@ -26,7 +26,7 @@ public class TagServiceImpl implements TagService {
     public Long addTag(Article_tag articletag){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ar_tag", articletag.getAr_tag());
-        HttpEntity<JSONObject> httpEntity = new HttpEntity<>(jsonObject, httpHeaders);
+        HttpEntity<JSONObject> httpEntity = new HttpEntity<JSONObject>(jsonObject, httpHeaders);
         JSONObject jsonGot = restTemplate.postForEntity(prefix+"Article_tag/", httpEntity, JSONObject.class).getBody();
         return jsonGot.isEmpty() ? null : (Long) jsonGot.get("id");
     }

@@ -39,6 +39,6 @@ public class RecUserServiceImpl implements RecUserService {
     private static String getUserProfile (User u){
         return String.format("{\\\"upa\\\":" +
                 "{\\\"u_job\\\":\\\"%s\\\", \\\"u_gender\\\":\\\"%s\\\", \\\"u_age\\\":\\\"%s\\\"}}",
-                u.getU_job(),u.getU_gender.toString(),u.getU_age.toString());
+                u.getU_job(),u.getU_gender().toString(),u.getU_age().toString());
     }
 }
