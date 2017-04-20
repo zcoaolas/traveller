@@ -12,6 +12,7 @@
 
     <!-- 扫描service包下所有使用注解的类型 -->
     <context:component-scan base-package="com.eis.czc.service" />
+    <context:component-scan base-package="com.eis.czc.recservice" />
 
     <!-- 配置事务管理器 -->
     <!--<bean id="transactionManager"

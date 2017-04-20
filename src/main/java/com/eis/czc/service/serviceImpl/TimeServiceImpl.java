@@ -26,7 +26,7 @@ public class TimeServiceImpl implements TimeService{
     public Long addTime(Article_time articletime){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("ar_time", articletime.getAr_time());
-        HttpEntity<JSONObject> httpEntity = new HttpEntity<>(jsonObject, httpHeaders);
+        HttpEntity<JSONObject> httpEntity = new HttpEntity<JSONObject>(jsonObject, httpHeaders);
         JSONObject jsonGot = restTemplate.postForEntity(prefix+"Article_time/", httpEntity, JSONObject.class).getBody();
         return jsonGot.isEmpty() ? null : (Long) jsonGot.get("id");
     }
