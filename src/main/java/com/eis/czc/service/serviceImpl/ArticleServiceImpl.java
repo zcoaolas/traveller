@@ -8,6 +8,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -38,6 +39,12 @@ public class ArticleServiceImpl implements ArticleService{
 
     public JSONObject getAllArticles(){
         return restTemplate.getForObject(prefix+"Article/", JSONObject.class);
+    }
+
+    public void updateArticle(Article article){
+        HttpEntity<Object> httpEntity = new HttpEntity<>(JSONObject.fromObject(article), httpHeaders);
+        restTemplate.exchange(prefix+"Article/"+article.getId().toString(), HttpMethod.PUT,
+                httpEntity, JSONObject.class);
     }
 
     /*private JSONObject articleToJson(Article article){
