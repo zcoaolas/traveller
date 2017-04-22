@@ -3,6 +3,7 @@ package com.eis.czc.service.serviceImpl;
 import com.eis.czc.model.Article;
 import com.eis.czc.service.ArticleService;
 import com.eis.czc.util.Parameter;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,12 @@ public class ArticleServiceImpl implements ArticleService{
         return restTemplate.getForObject(prefix+"Article/", JSONObject.class);
     }
 
-    public void updateArticle(Article article){
-        HttpEntity<Object> httpEntity = new HttpEntity<>(JSONObject.fromObject(article), httpHeaders);
-        restTemplate.exchange(prefix+"Article/"+article.getId().toString(), HttpMethod.PUT,
-                httpEntity, JSONObject.class);
+    public JSONObject updateArticle(Article article){
+        JSONObject obj = JSONObject.fromObject(article);
+        obj.remove("id");
+        HttpEntity<Object> httpEntity = new HttpEntity<>(obj, httpHeaders);
+        return restTemplate.exchange(prefix+"Article/"+article.getId().toString(), HttpMethod.PUT,
+                httpEntity, JSONObject.class).getBody();
     }
 
     /*private JSONObject articleToJson(Article article){

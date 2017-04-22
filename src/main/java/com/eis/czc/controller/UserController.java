@@ -4,6 +4,7 @@ package com.eis.czc.controller;
 import com.eis.czc.model.User;
 import com.eis.czc.model.UserPool;
 import com.eis.czc.service.UserService;
+import com.eis.czc.util.SystemRole;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -94,6 +95,21 @@ public class UserController {
         userService.updateUser(user);
         userPool.userLogout(user.getU_name());
 
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/User", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<JSONObject> modifyUser(@RequestHeader("User-Hash") Integer u_hash,
+                                                 @RequestHeader("Username") String u_name){
+        User u = userPool.validateUser(u_name, u_hash);
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        if (u == null || !u.hasRole(SystemRole.ADMIN)){
+            return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+        }
+
+        ret = userService.getUsers();
         return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 

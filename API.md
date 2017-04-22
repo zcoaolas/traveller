@@ -138,6 +138,45 @@ Username -> test_uname
 {}
 ```
 
+/User GET
+---
+> Admin Only. Get all users.
+
+*success response*
+```
+{
+  "User": [
+    {
+      "id": 1492495616439,
+      "u_name": "jiayangchen",
+      "u_mail": "jyc@jyc.cn",
+      "u_password": "",
+      "u_role": 7
+    },
+    {
+      "id": 1492505426906,
+      "u_name": "editor",
+      "u_mail": "editor@qq.com",
+      "u_password": "",
+      "u_role": 4
+    },
+    {
+      "id": 1492505453965,
+      "u_name": "reviewer",
+      "u_mail": "reviewer@qq.com",
+      "u_password": "",
+      "u_role": 2
+    }
+  ]
+}
+```
+
+*failed response*
+```
+401 Unauthorized
+{}
+```
+
 /Article POST
 ---
 > Write and submit a new article.
@@ -272,6 +311,290 @@ EVERYONE: articles you wrote
       ],
       "ar_tag_list": [],
       "ar_review_list": []
+    }
+  ]
+}
+```
+
+/Article PUT
+---
+> Modify an article status.
+
+*request body (first reviewer adds his review)*
+```
+{
+  "type": "article",
+  "id": 1492605062619,
+  "ar_content": "当第一只角马出现时，我们立刻惊呼了起来。",
+  "ar_title": "与一万只角马迎面相逢(二）",
+  "ar_place": "",
+  "ar_category": "自然风光",
+  "ar_like_list": "",
+  "ar_collect_list": "",
+  "ar_read_list": "",
+  "ar_author": {
+    "id": 1492492007079,
+    "u_name": "chenzhan",
+    "u_mail": "cz@cz.com",
+    "u_password": "",
+    "u_role": 4
+  },
+  "ar_reviewer": [
+    {
+      "id": 1492443754057,
+      "u_name": "junmingcao",
+      "u_mail": "mail@qq.com",
+      "u_password": "",
+      "u_role": 8
+    },
+  ],
+  "ar_editor": {
+    "id": 1492495616439,
+    "u_name": "jiayangchen",
+    "u_mail": "jyc@jyc.cn",
+    "u_password": "",
+    "u_role": 7
+  },
+  "ar_time_list": [
+    {
+      "id": 1492605058905,
+      "ar_time": "2017-04-19 20:31:00.004"
+    },
+    {
+      "id": 1492841952576,
+      "ar_time": "2017-04-22 14:19:09.664"
+    }
+  ],
+  "ar_url_list": [
+    {
+      "id": 1492605058672,
+      "ar_url": "https://img3.doubanio.com/view/note/large/public/p38270091.jpg"
+    },
+    {
+      "id": 1492605058793,
+      "ar_url": "https://img1.doubanio.com/view/note/large/public/p38269988.jpg"
+    }
+  ],
+  "ar_tag_list": [],
+  "ar_review_list": [
+    {
+      "ar_comment": "This is a great article!!",
+      "ar_result": 1,
+      "ar_confidence": 77,
+      "ar_point": 97
+    }
+  ]
+}
+```
+*success response (first reviewer added his review successfully)*
+```
+{
+  "type": "article",
+  "id": 1492605062619,
+  "ar_content": "当第一只角马出现时，我们立刻惊呼了起来。",
+  "ar_title": "与一万只角马迎面相逢(二）",
+  "ar_place": "",
+  "ar_category": "自然风光",
+  "ar_like_list": "",
+  "ar_collect_list": "",
+  "ar_read_list": "",
+  "ar_author": {
+    "id": 1492492007079,
+    "u_name": "chenzhan",
+    "u_mail": "cz@cz.com",
+    "u_password": "",
+    "u_role": 4
+  },
+  "ar_reviewer": [
+    {
+      "id": 1492443754057,
+      "u_name": "junmingcao",
+      "u_mail": "mail@qq.com",
+      "u_password": "",
+      "u_role": 8
+    }
+  ],
+  "ar_editor": {
+    "id": 1492495616439,
+    "u_name": "jiayangchen",
+    "u_mail": "jyc@jyc.cn",
+    "u_password": "",
+    "u_role": 7
+  },
+  "ar_time_list": [
+    {
+      "id": 1492605058905,
+      "ar_time": "2017-04-19 20:31:00.004"
+    },
+    {
+      "id": 1492841952576,
+      "ar_time": "2017-04-22 14:19:09.664"
+    }
+  ],
+  "ar_url_list": [
+    {
+      "id": 1492605058672,
+      "ar_url": "https://img3.doubanio.com/view/note/large/public/p38270091.jpg"
+    },
+    {
+      "id": 1492605058793,
+      "ar_url": "https://img1.doubanio.com/view/note/large/public/p38269988.jpg"
+    }
+  ],
+  "ar_tag_list": [],
+  "ar_review_list": [
+    {
+      "id": 1492841928912,
+      "ar_comment": "This is a great article!!",
+      "ar_result": 1,
+      "ar_confidence": 77,
+      "ar_point": 97
+    }
+  ]
+}
+```
+
+*request body (add user 1492495616439 as a reviewer)*
+```
+{
+  "type": "article",
+  "id": 1492605062619,
+  "ar_content": "当第一只角马出现时，我们立刻惊呼了起来。",
+  "ar_title": "与一万只角马迎面相逢(二）",
+  "ar_place": "",
+  "ar_category": "自然风光",
+  "ar_like_list": "",
+  "ar_collect_list": "",
+  "ar_read_list": "",
+  "ar_author": {
+    "id": 1492492007079,
+    "u_name": "chenzhan",
+    "u_mail": "cz@cz.com",
+    "u_password": "",
+    "u_role": 4
+  },
+  "ar_reviewer": [
+    {
+      "id": 1492443754057,
+      "u_name": "junmingcao",
+      "u_mail": "mail@qq.com",
+      "u_password": "",
+      "u_role": 8
+    },
+    {
+    	"id": 1492495616439
+    }
+  ],
+  "ar_editor": {
+    "id": 1492495616439,
+    "u_name": "jiayangchen",
+    "u_mail": "jyc@jyc.cn",
+    "u_password": "",
+    "u_role": 7
+  },
+  "ar_time_list": [
+    {
+      "id": 1492605058905,
+      "ar_time": "2017-04-19 20:31:00.004"
+    },
+    {
+      "id": 1492841952576,
+      "ar_time": "2017-04-22 14:19:09.664"
+    }
+  ],
+  "ar_url_list": [
+    {
+      "id": 1492605058672,
+      "ar_url": "https://img3.doubanio.com/view/note/large/public/p38270091.jpg"
+    },
+    {
+      "id": 1492605058793,
+      "ar_url": "https://img1.doubanio.com/view/note/large/public/p38269988.jpg"
+    }
+  ],
+  "ar_tag_list": [],
+  "ar_review_list": [
+    {
+      "id": 1492841928912,
+      "ar_comment": "This is a great article!!",
+      "ar_result": 1,
+      "ar_confidence": 77,
+      "ar_point": 97
+    }
+  ]
+}
+```
+
+*success response (user 1492495616439 added as a reviewer successfully)*
+```
+{
+  "type": "article",
+  "id": 1492605062619,
+  "ar_content": "当第一只角马出现时，我们立刻惊呼了起来。塞伦盖蒂国家公园有14,750平方公里，几乎相当于整个北京市城区的面积总和，但越野车只能在固定的土路上奔跑，不许随意横穿。也就是说，整个游览，我们都是路边有什么看什么。常常目力所及，一大片原野上只有两三条路交错着伸向远方。但即便是这么有限的行驶范围，野生动物还是源源不断地在路边出现。角马是塞伦盖蒂的明星，所谓的东非动物大迁徙，最著名的镜头就是成千上万头角马奔跑着过河，不时有几只被河里的鳄鱼一口撕倒。\n东非动物大迁徙实际是持续全年的，超过一百万的动物从坦桑尼亚的塞伦盖蒂走到肯尼亚的马赛马拉，又随着新鲜长出的清草一路啃回塞伦盖蒂。旺季时，塞伦盖蒂会有150万角马和约25万只斑马经过，那时河边会挤满了越野车，房价和车费也会急剧飙升。\n5月初是雨季末尾，塞伦盖蒂从人、到车、到角马，都稀疏得很，那只傻乎乎的角马站在路边，目睹着两个中国年轻人突然嗷地一声跳起来，噼里啪啦快门按个不停。",
+  "ar_title": "与一万只角马迎面相逢(二）",
+  "ar_place": "",
+  "ar_category": "自然风光",
+  "ar_like_list": "",
+  "ar_collect_list": "",
+  "ar_read_list": "",
+  "ar_author": {
+    "id": 1492492007079,
+    "u_name": "chenzhan",
+    "u_mail": "cz@cz.com",
+    "u_password": "",
+    "u_role": 4
+  },
+  "ar_reviewer": [
+    {
+      "id": 1492443754057,
+      "u_name": "junmingcao",
+      "u_mail": "mail@qq.com",
+      "u_password": "",
+      "u_role": 8
+    },
+    {
+      "id": 1492495616439,
+      "u_name": "jiayangchen",
+      "u_mail": "jyc@jyc.cn",
+      "u_password": "",
+      "u_role": 7
+    }
+  ],
+  "ar_editor": {
+    "id": 1492495616439,
+    "u_name": "jiayangchen",
+    "u_mail": "jyc@jyc.cn",
+    "u_password": "",
+    "u_role": 7
+  },
+  "ar_time_list": [
+    {
+      "id": 1492605058905,
+      "ar_time": "2017-04-19 20:31:00.004"
+    },
+    {
+      "id": 1492841952576,
+      "ar_time": "2017-04-22 14:19:09.664"
+    }
+  ],
+  "ar_url_list": [
+    {
+      "id": 1492605058672,
+      "ar_url": "https://img3.doubanio.com/view/note/large/public/p38270091.jpg"
+    },
+    {
+      "id": 1492605058793,
+      "ar_url": "https://img1.doubanio.com/view/note/large/public/p38269988.jpg"
+    }
+  ],
+  "ar_tag_list": [],
+  "ar_review_list": [
+    {
+      "id": 1492841928912,
+      "ar_comment": "This is a great article!!",
+      "ar_result": 1,
+      "ar_confidence": 77,
+      "ar_point": 97
     }
   ]
 }

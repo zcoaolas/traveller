@@ -10,4 +10,6 @@ public interface ArticleService {
     JSONObject addArticle(Article article);
 
     JSONObject getAllArticles();
+
+    JSONObject updateArticle(Article article);
 }

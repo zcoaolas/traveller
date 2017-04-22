@@ -42,10 +42,10 @@ public class ArticleController {
                                               @RequestBody Article article) {
         User u = userPool.validateUser(u_name, u_hash);
         JSONObject ret = new JSONObject();
-        if (u == null) {
-            return new ResponseEntity<>(ret, HttpStatus.UNAUTHORIZED);
-        }
         HttpHeaders headers = new HttpHeaders();
+        if (u == null) {
+            return new ResponseEntity<>(ret, addHeaderAttributes(headers), HttpStatus.UNAUTHORIZED);
+        }
 
         article.setAr_author(u);
 
@@ -119,11 +119,42 @@ public class ArticleController {
                                                  @RequestBody Article article) {
         User u = userPool.validateUser(u_name, u_hash);
         JSONObject ret = new JSONObject();
-        if (u == null) return new ResponseEntity<>(ret, HttpStatus.UNAUTHORIZED);
         HttpHeaders headers = new HttpHeaders();
         headers = addHeaderAttributes(headers);
-        // TODO
-        return null;
+        if (u == null) return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+
+        List<Article_review> reviewList = article.getAr_review_list();
+        User editor = article.getAr_editor();
+        List<User> reviewerList = article.getAr_reviewer();
+        List<Article_time> timeList = article.getAr_time_list();
+
+        // Add review
+        int review_size = reviewList.size();
+        if(review_size >= 1 && review_size <= 4 && reviewerList.size() >= review_size){
+            User targetReviewer;
+            Article_review targetReview = reviewList.get(review_size-1);
+            if (review_size == 4) {
+                targetReviewer = editor;
+            }
+            else{
+                targetReviewer = reviewerList.get(review_size-1);
+            }
+            if (u_name.equals(targetReviewer.getU_name()) && null == targetReview.getId()){
+                targetReview.setId(reviewService.addReview(targetReview));
+
+                Timestamp ts = new Timestamp(System.currentTimeMillis());
+                Article_time at = new Article_time(0L, ts.toString());
+                at.setId(timeService.addTime(at));
+                timeList.add(at);
+            }
+        }
+
+        article.setAr_time_list(timeList);
+        article.setAr_review_list(reviewList);
+
+        JSONObject jsonGot = articleService.updateArticle(article);
+
+        return new ResponseEntity<>(jsonGot, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = {"/Article"}, method = RequestMethod.OPTIONS)
