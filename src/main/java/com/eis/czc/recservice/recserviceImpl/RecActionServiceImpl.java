@@ -63,7 +63,7 @@ public class RecActionServiceImpl implements RecActionService {
                 HttpMethod.GET, null, JSONObject.class).getBody();
         System.out.println(result);
         return true;
-    }
+}
 
     private static String getActionInfo(User u, Article a, String action){
         return String.format("{\"action\":\"%s\"}",action);
