@@ -60,7 +60,10 @@ public class UserController {
             return new ResponseEntity<>(ret, headers, HttpStatus.OK);
         }
         user.setId(u_id);
-        //recUserService.addUser(user);
+
+        // Recommendation
+        recUserService.addUser(user);
+
         return authenticateUser(user.getU_name(), user.getU_password());
     }
 
@@ -91,6 +94,7 @@ public class UserController {
         if (u == null){
             return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
         }
+        User fromUser = userService.getUserById(user.getId());
 
         Integer user_role = u.getU_role();
         Integer modified_role = user.getU_role();
@@ -101,7 +105,10 @@ public class UserController {
         userService.updateUser(user);
         userPool.userLogout(user.getU_name());
 
-        //recUserService.updateProfile(userService.getUserById(user.getId()));
+        // Recommendation
+        User toUser = userService.getUserById(user.getId());
+        if (keyProfileChanged(fromUser, toUser)) recUserService.updateProfile(toUser);
+
         return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 
@@ -149,5 +156,15 @@ public class UserController {
         headers.add("Access-Control-Allow-Origin", "*");
         headers.add("Content-Type","application/json;charset=UTF-8");
         return headers;
+    }
+
+    private boolean keyProfileChanged(User fromUser, User toUser){
+        if(toUser.getU_age() == null) return fromUser.getU_age() != null;
+        if(toUser.getU_job() == null) return fromUser.getU_job() != null;
+        if(toUser.getU_gender() == null) return fromUser.getU_gender() != null;
+
+        return !(toUser.getU_age().equals(fromUser.getU_age()) &&
+                toUser.getU_job().equals(fromUser.getU_job()) &&
+                toUser.getU_gender().equals(fromUser.getU_gender()));
     }
 }

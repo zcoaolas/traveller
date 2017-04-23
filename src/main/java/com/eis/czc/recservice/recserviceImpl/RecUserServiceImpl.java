@@ -21,9 +21,10 @@ public class RecUserServiceImpl implements RecUserService {
 
     public boolean addUser (User u){
         JSONObject object = new JSONObject();
-        object.put("itemid",u.getId());
+        object.put("itemid",u.getId().toString());
         object.put("itemtype","USER");
-        object.put("profile", getUserProfile(u));
+        //object.put("profile", getUserProfile(u));
+        object.put("profile", "{ \"upa\":{\"jobtype\": \"buiseness\"}}");
         object = Parameter.authBody(object);
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(object);
         JSONObject result = restTemplate.postForEntity(Parameter.PREFIXREC+"profile/store", httpEntity, JSONObject.class).getBody();
