@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
     <facet type="web" name="Web">
       <configuration>
         <descriptors>
@@ -16,7 +19,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -67,19 +70,6 @@
     <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-runtime:1.0.8" level="project" />
     <orderEntry type="library" name="Maven: com.dyuproject.protostuff:protostuff-collectionschema:1.0.8" level="project" />
     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.main.distributions:glassfish:ips:4.1.1" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: com.sun:tools-jar:1">
-        <CLASSES>
-          <root url="jar://C:/Program Files/Java/jdk1.8.0_101/jre/../lib/tools.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="Maven: javax:javaee-api:7.0" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.5.0" level="project" />
-    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.shiro:shiro-core:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.8.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.shiro:shiro-web:1.2.1" level="project" />

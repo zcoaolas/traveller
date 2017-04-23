@@ -3,11 +3,13 @@ package com.eis.czc.service.serviceImpl;
 import com.eis.czc.model.Article;
 import com.eis.czc.service.ArticleService;
 import com.eis.czc.util.Parameter;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -29,7 +31,7 @@ public class ArticleServiceImpl implements ArticleService{
         JSONObject bodyJson = JSONObject.fromObject(article);
         bodyJson.remove("id");
         bodyJson.remove("ar_editor");
-        System.out.println(bodyJson.toString());
+        //System.out.println(bodyJson.toString());
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(bodyJson, httpHeaders);
 
         JSONObject jsonGot = restTemplate.postForEntity(prefix+"Article/", httpEntity, JSONObject.class).getBody();
@@ -38,6 +40,26 @@ public class ArticleServiceImpl implements ArticleService{
 
     public JSONObject getAllArticles(){
         return restTemplate.getForObject(prefix+"Article/", JSONObject.class);
+    }
+
+    public JSONObject updateArticle(Article article){
+        JSONObject obj = JSONObject.fromObject(article);
+        obj.remove("id");
+        HttpEntity<Object> httpEntity = new HttpEntity<>(obj, httpHeaders);
+        return restTemplate.exchange(prefix+"Article/"+article.getId().toString(), HttpMethod.PUT,
+                httpEntity, JSONObject.class).getBody();
+    }
+
+    public JSONObject updateArticle(JSONObject article){
+        String aId = article.getString("id");
+        article.remove("id");
+        HttpEntity<Object> httpEntity = new HttpEntity<>(article, httpHeaders);
+        return restTemplate.exchange(prefix+"Article/"+aId, HttpMethod.PUT,
+                httpEntity, JSONObject.class).getBody();
+    }
+
+    public JSONObject getArticleById(Long articleId){
+        return restTemplate.getForObject(prefix+"Article/"+articleId, JSONObject.class);
     }
 
     /*private JSONObject articleToJson(Article article){
@@ -70,8 +92,6 @@ public class ArticleServiceImpl implements ArticleService{
             timeList.add(timeJ);
         }
         jsonObject.put("ar_time_list", timeList);
-
-        // TODO Support all attributes
 
         System.out.println(jsonObject.toString());
         return jsonObject;

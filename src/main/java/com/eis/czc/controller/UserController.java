@@ -3,7 +3,10 @@ package com.eis.czc.controller;
 
 import com.eis.czc.model.User;
 import com.eis.czc.model.UserPool;
+import com.eis.czc.recservice.RecUserService;
 import com.eis.czc.service.UserService;
+import com.eis.czc.util.SystemRole;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RecUserService recUserService;
 
     private UserPool userPool = UserPool.getInstance();
 
@@ -54,6 +59,8 @@ public class UserController {
             ret.put("message", "Registration Failed");
             return new ResponseEntity<>(ret, headers, HttpStatus.OK);
         }
+        user.setId(u_id);
+        //recUserService.addUser(user);
         return authenticateUser(user.getU_name(), user.getU_password());
     }
 
@@ -94,18 +101,50 @@ public class UserController {
         userService.updateUser(user);
         userPool.userLogout(user.getU_name());
 
+        //recUserService.updateProfile(userService.getUserById(user.getId()));
         return new ResponseEntity<>(ret, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/User", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<JSONObject> getUser(@RequestHeader("User-Hash") Integer u_hash,
+                                                 @RequestHeader("Username") String u_name){
+        User u = userPool.validateUser(u_name, u_hash);
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        if (u == null){
+            return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+        }
+
+        JSONArray userRet = new JSONArray();
+        JSONObject o = userService.getUsers();
+        JSONArray users = (JSONArray) o.get("User");
+        for (int i = 0; i < users.size(); i++){
+            JSONObject usr = JSONObject.fromObject(users.get(i));
+            if (u.hasRole((int) usr.get("u_role"))){
+                userRet.add(usr);
+            }
+        }
+        ret.put("User", userRet);
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = {"/User", "/User/Logout", "/User/Reg"}, method = RequestMethod.OPTIONS)
+    public ResponseEntity<JSONObject> supportOptions() {
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<>(ret, addHeaderAttributes(headers), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/")
     public String indexPage() {
-       return "index";
+        return "index";
     }
 
 
     public static HttpHeaders addHeaderAttributes (HttpHeaders headers){
         headers.add("Access-Control-Allow-Credentials", "true");
-        headers.add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, passwd");
+        headers.add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, passwd, User-Hash, Username");
         headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         headers.add("Access-Control-Allow-Origin", "*");
         headers.add("Content-Type","application/json;charset=UTF-8");
