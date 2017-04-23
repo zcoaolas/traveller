@@ -599,3 +599,63 @@ EVERYONE: articles you wrote
   ]
 }
 ```
+
+/Article/7654321/Like POST
+---
+> User likes an article which id is 7654321
+
+*request body*
+```
+{}
+```
+
+*success response*
+```
+{}
+```
+
+*failed response*
+```
+401 Unauthorized
+{}
+```
+
+/Article/7654321/Collect POST
+---
+> User puts an article which id is 7654321 into collection
+
+*request body*
+```
+{}
+```
+
+*success response*
+```
+{}
+```
+
+*failed response*
+```
+401 Unauthorized
+{}
+```
+
+/Article/7654321/Read POST
+---
+> User reads an article which id is 7654321
+
+*request body*
+```
+{}
+```
+
+*success response*
+```
+{}
+```
+
+*failed response*
+```
+401 Unauthorized
+{}
+```

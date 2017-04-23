@@ -85,9 +85,7 @@ public class ArticleController {
         else if (u.hasRole(SystemRole.EDITOR)){
             for (Object obj : articleArray){
                 JSONObject anArticle = (JSONObject) obj;
-                if (shouldReview(anArticle, u.getU_name()) ||
-                        isAuthor(anArticle, u.getU_name()) ||
-                        isEditor(anArticle, u.getU_name())){
+                if (shouldReview(anArticle, u.getU_name())){
                     filteredArticles.add(anArticle);
                 }
             }
@@ -95,8 +93,7 @@ public class ArticleController {
         else if (u.hasRole(SystemRole.REVIEWER)){
             for (Object obj : articleArray){
                 JSONObject anArticle = (JSONObject) obj;
-                if (shouldReview(anArticle, u.getU_name()) ||
-                        isAuthor(anArticle, u.getU_name())){
+                if (shouldReview(anArticle, u.getU_name())){
                     filteredArticles.add(anArticle);
                 }
             }
@@ -104,12 +101,12 @@ public class ArticleController {
         else{
             for (Object obj : articleArray){
                 JSONObject anArticle = (JSONObject) obj;
-                if (isAuthor(anArticle, u.getU_name())){
+                if (isAuthor(anArticle, u.getU_name()) ||
+                        isPublished(anArticle)){
                     filteredArticles.add(anArticle);
                 }
             }
         }
-        //TODO add articles that published
         ret.put("Article", filteredArticles);
         return new ResponseEntity<>(ret, addHeaderAttributes(headers), HttpStatus.OK);
     }
@@ -130,7 +127,8 @@ public class ArticleController {
 
         // Add review
         int review_size = reviewList.size();
-        if(review_size >= 1 && review_size <= 4 && reviewerList.size() >= review_size){
+        if(review_size >= 1 && review_size <= 4 &&
+                ((reviewerList.size() >= review_size && review_size <= 3) || (review_size == 4))){
             User targetReviewer;
             Article_review targetReview = reviewList.get(review_size-1);
             if (review_size == 4) {
@@ -154,7 +152,44 @@ public class ArticleController {
 
         JSONObject jsonGot = articleService.updateArticle(article);
 
+        article.setId(jsonGot.getLong("id"));
+
         return new ResponseEntity<>(jsonGot, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/Article/{articleId}/{operation}", method = RequestMethod.POST)
+    public ResponseEntity<JSONObject> collectArticleInfo(@RequestHeader("User-Hash") Integer u_hash,
+                                                         @RequestHeader("Username") String u_name,
+                                                         @PathVariable Long articleId, @PathVariable String operation){
+        User user = userPool.validateUser(u_name, u_hash);
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        if (user == null) return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+
+        JSONObject articleGot = articleService.getArticleById(articleId);
+        if (!articleGot.isEmpty()){
+            if ("Like".equals(operation)) {
+                String likeList = articleGot.getString("ar_like_list");
+                likeList += user.getId().toString() + ";";
+                articleGot.put("ar_like_list", likeList);
+                articleService.updateArticle(articleGot);
+            }
+            else if ("Collect".equals(operation)) {
+                String collectList = articleGot.getString("ar_collect_list");
+                collectList += user.getId().toString() + ";";
+                articleGot.put("ar_collect_list", collectList);
+                articleService.updateArticle(articleGot);
+            }
+            else if ("Read".equals(operation)) {
+                String readList = articleGot.getString("ar_read_list");
+                readList += user.getId().toString() + ";";
+                articleGot.put("ar_read_list", readList);
+                articleService.updateArticle(articleGot);
+            }
+        }
+
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = {"/Article"}, method = RequestMethod.OPTIONS)
@@ -174,16 +209,36 @@ public class ArticleController {
             JSONObject targetReviewer = JSONObject.fromObject(ar_reviewer.get(review_size));
             if (username.equals(targetReviewer.getString("u_name"))) return true;
         }
+        if(review_size==3 && reviewer_size==3){
+            JSONObject editor = JSONObject.fromObject(anArticle.get("ar_editor"));
+            if (username.equals(editor.getString("u_name"))) return true;
+        }
         return false;
     }
 
     private boolean isAuthor(JSONObject anArticle, String username){
         JSONObject targetAuthor = JSONObject.fromObject(anArticle.get("ar_author"));
-        return username.equals(targetAuthor.getString("u_name"));
+        if(username.equals(targetAuthor.getString("u_name"))){
+            JSONObject editor = JSONObject.fromObject(anArticle.get("ar_editor"));
+            JSONArray ar_reviewer = anArticle.getJSONArray("ar_reviewer");
+            JSONArray ar_review_list = anArticle.getJSONArray("ar_review_list");
+            if(editor.isEmpty() && ar_reviewer.isEmpty()) return true;
+            if(ar_review_list.size() == 4) return true;
+        }
+        return false;
     }
 
-    private boolean isEditor(JSONObject anArticle, String username){
+    /*private boolean isEditor(JSONObject anArticle, String username){
         JSONObject targetEditor = JSONObject.fromObject(anArticle.get("ar_editor"));
         return username.equals(targetEditor.getString("u_name"));
+    }*/
+
+    private boolean isPublished(JSONObject anArticle){
+        JSONArray review_list = JSONArray.fromObject(anArticle.get("ar_review_list"));
+        if(review_list.size() == 4){
+            JSONObject editorReview = (JSONObject) review_list.get(3);
+            if (1 == (int) editorReview.get("ar_result")) return true;
+        }
+        return false;
     }
 }

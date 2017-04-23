@@ -43,4 +43,7 @@ public class User implements Serializable {
         }*/
         return u_role >= role.getCharacter();
     }
+    public boolean hasRole(int role){
+        return u_role >= role;
+    }
 }

@@ -12,4 +12,7 @@ public interface ArticleService {
     JSONObject getAllArticles();
 
     JSONObject updateArticle(Article article);
+    JSONObject updateArticle(JSONObject article);
+
+    JSONObject getArticleById(Long articleId);
 }
