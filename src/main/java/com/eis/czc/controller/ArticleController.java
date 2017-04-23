@@ -1,6 +1,8 @@
 package com.eis.czc.controller;
 
 import com.eis.czc.model.*;
+import com.eis.czc.recservice.RecActionService;
+import com.eis.czc.recservice.RecArticleService;
 import com.eis.czc.service.*;
 import com.eis.czc.util.SystemRole;
 import net.sf.json.JSONArray;
@@ -34,6 +36,10 @@ public class ArticleController {
     private TimeService timeService;
     @Autowired
     private UrlService urlService;
+    @Autowired
+    private RecArticleService recArticleService;
+    @Autowired
+    private RecActionService recActionService;
 
     private UserPool userPool = UserPool.getInstance();
 
@@ -63,6 +69,10 @@ public class ArticleController {
         article.setAr_time_list(timeList);
 
         JSONObject jsonGot = articleService.addArticle(article);
+
+        // Recommendation
+        Article a = (Article) JSONObject.toBean(jsonGot, Article.class);
+        recArticleService.addArticle(a);
 
         return new ResponseEntity<>(jsonGot, addHeaderAttributes(headers), HttpStatus.OK);
     }
@@ -120,6 +130,7 @@ public class ArticleController {
         headers = addHeaderAttributes(headers);
         if (u == null) return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
 
+        Article fromArticle = (Article) JSONObject.toBean(articleService.getArticleById(article.getId()), Article.class);
         List<Article_review> reviewList = article.getAr_review_list();
         User editor = article.getAr_editor();
         List<User> reviewerList = article.getAr_reviewer();
@@ -151,8 +162,13 @@ public class ArticleController {
         article.setAr_review_list(reviewList);
 
         JSONObject jsonGot = articleService.updateArticle(article);
-
         article.setId(jsonGot.getLong("id"));
+
+        // Recommendation
+        Article toArticle = (Article) JSONObject.toBean(jsonGot, Article.class);
+        if (keyProfileChanged(fromArticle, toArticle)){
+            recArticleService.updateProfile(toArticle);
+        }
 
         return new ResponseEntity<>(jsonGot, headers, HttpStatus.OK);
     }
@@ -173,7 +189,11 @@ public class ArticleController {
                 String likeList = articleGot.getString("ar_like_list");
                 likeList += user.getId().toString() + ";";
                 articleGot.put("ar_like_list", likeList);
-                articleService.updateArticle(articleGot);
+                JSONObject a = articleService.updateArticle(articleGot);
+
+                // Recommendation
+                Article aa = (Article) JSONObject.toBean(a, Article.class);
+                recActionService.star(user, aa, u_hash.toString());
             }
             else if ("Collect".equals(operation)) {
                 String collectList = articleGot.getString("ar_collect_list");
@@ -185,7 +205,11 @@ public class ArticleController {
                 String readList = articleGot.getString("ar_read_list");
                 readList += user.getId().toString() + ";";
                 articleGot.put("ar_read_list", readList);
-                articleService.updateArticle(articleGot);
+                JSONObject a = articleService.updateArticle(articleGot);
+
+                // Recommendation
+                Article aa = (Article) JSONObject.toBean(a, Article.class);
+                recActionService.view(user, aa, u_hash.toString());
             }
         }
 
@@ -240,5 +264,17 @@ public class ArticleController {
             if (1 == (int) editorReview.get("ar_result")) return true;
         }
         return false;
+    }
+
+    private boolean keyProfileChanged(Article fromA, Article toA){
+        if (toA.getAr_title() == null) return fromA.getAr_title() != null;
+        if (toA.getAr_place() == null) return fromA.getAr_place() != null;
+        if (toA.getAr_author() == null) return fromA.getAr_author() != null;
+        if (toA.getAr_category() == null) return fromA.getAr_category() != null;
+
+        return !(toA.getAr_title().equals(fromA.getAr_title()) &&
+        toA.getAr_place().equals(fromA.getAr_place()) &&
+        toA.getAr_author().equals(fromA.getAr_author()) &&
+        toA.getAr_category().equals(fromA.getAr_category()));
     }
 }

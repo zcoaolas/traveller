@@ -38,6 +38,6 @@ public class RecArticleServiceImpl implements RecArticleService {
                         "{\\\"ar_title\\\":\\\"%s\\\", \\\"ar_place\\\":\\\"%s\\\", \\\"ar_category\\\":\\\"%s\\\"," +
                 "\\\"author\\\":\\\"%s\\\"}}",
                 u.getAr_title()==null?"":u.getAr_title(),u.getAr_place()==null?"":u.getAr_place()
-                ,u.getAr_category()==null?"":u.getAr_category(),u.getAr_author()==null?"":u.getAr_author.getU_name());
+                ,u.getAr_category()==null?"":u.getAr_category(),u.getAr_author()==null?"":u.getAr_author().getU_name());
     }
 }
