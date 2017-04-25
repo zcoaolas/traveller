@@ -95,7 +95,7 @@ public class ArticleController {
         else if (u.hasRole(SystemRole.EDITOR)){
             for (Object obj : articleArray){
                 JSONObject anArticle = (JSONObject) obj;
-                if (shouldReview(anArticle, u.getU_name())){
+                if (shouldEdit(anArticle, u.getU_name())){
                     filteredArticles.add(anArticle);
                 }
             }
@@ -238,6 +238,12 @@ public class ArticleController {
             if (username.equals(editor.getString("u_name"))) return true;
         }
         return false;
+    }
+
+    private boolean shouldEdit(JSONObject anArticle, String username){
+        return anArticle.has("ar_editor") &&
+                anArticle.getJSONObject("ar_editor").has("u_name") &&
+                anArticle.getJSONObject("ar_editor").getString("u_name").equals(username);
     }
 
     private boolean isAuthor(JSONObject anArticle, String username){

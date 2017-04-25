@@ -10,6 +10,7 @@ public class Parameter {
     //public static final String PREFIX114 ="http://112.74.62.114:8080/Entity/U192c20551af64/Travellers/";
 
     public static final String PREFIXREC ="http://59.78.45.250:8071/easyrec-web/api/1.1/json/";
+    public static final String PREFIXREC1 ="http://59.78.45.250:8071/easyrec-web/api/1.0/";
     public static final String APIKEY = "0b9ce9a990539a81a0af01fec77dcc29";
     public static final String TENANTID = "Traveller";
     public static JSONObject authBody(JSONObject body){
