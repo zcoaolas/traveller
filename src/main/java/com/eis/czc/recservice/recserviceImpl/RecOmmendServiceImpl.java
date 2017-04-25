@@ -39,6 +39,7 @@ public class RecOmmendServiceImpl implements RecOmmendService {
             ids.add(i.getString("id"));
         return ids;
     }
+
     public List<String> otherUsersStar(String uid, String aid, int numberOfResults, int offset){
         StringBuilder sb = new StringBuilder();
         sb.append("?apikey="+ Parameter.APIKEY);
