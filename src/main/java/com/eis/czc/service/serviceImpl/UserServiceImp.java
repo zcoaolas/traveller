@@ -4,8 +4,10 @@ import com.eis.czc.model.User;
 import com.eis.czc.service.UserService;
 import com.eis.czc.util.Parameter;
 import com.eis.czc.model.UserPool;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -108,5 +110,20 @@ public class UserServiceImp implements UserService {
                 prefix+"User/?User.u_name="+u_name,
                 HttpMethod.GET, httpEntity, JSONObject.class).getBody();
         return !objRec.isEmpty();
+    }
+
+    public void deleteTYZ(){
+        JSONObject jsonRes = restTemplate.getForObject(prefix+"User/", JSONObject.class);
+        JSONArray users = jsonRes.getJSONArray("User");
+        HttpEntity<Object> httpEntity=new HttpEntity<Object>(httpHeaders);
+
+        for (Object anUser: users){
+            JSONObject user = JSONObject.fromObject(anUser);
+            String username = user.getString("u_name");
+            if(username.indexOf("tianyizhang") == 0){
+                restTemplate.exchange(prefix+"User/" + user.getLong("id"),
+                        HttpMethod.DELETE, httpEntity, JSONObject.class);
+            }
+        }
     }
 }

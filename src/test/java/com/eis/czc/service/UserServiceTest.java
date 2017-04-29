@@ -48,4 +48,9 @@ public class UserServiceTest extends base.BaseTest {
         //List<User> userList= userService.getUsers();
         //System.out.println(userList);
     }
+
+    @Test
+    public void deleteTYZTest(){
+        userService.deleteTYZ();
+    }
 }

@@ -1,9 +1,13 @@
 package com.eis.czc.controller;
 
 
+import com.eis.czc.model.Article;
 import com.eis.czc.model.User;
 import com.eis.czc.model.UserPool;
+import com.eis.czc.recservice.RecActionService;
+import com.eis.czc.recservice.RecOmmendService;
 import com.eis.czc.recservice.RecUserService;
+import com.eis.czc.service.ArticleService;
 import com.eis.czc.service.UserService;
 import com.eis.czc.util.SystemRole;
 import net.sf.json.JSONArray;
@@ -22,6 +26,10 @@ public class UserController {
     private UserService userService;
     @Autowired
     private RecUserService recUserService;
+    @Autowired
+    private ArticleService articleService;
+    @Autowired
+    private RecActionService recActionService;
 
     private UserPool userPool = UserPool.getInstance();
 
@@ -133,6 +141,27 @@ public class UserController {
             }
         }
         ret.put("User", userRet);
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/User/Track", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    public ResponseEntity<JSONObject> trackUser(@RequestHeader("User-Hash") Integer u_hash,
+                                                @RequestHeader("Username") String u_name,
+                                                @RequestParam String from_ar, @RequestParam String to_ar,
+                                                @RequestParam String type) {
+        User u = userPool.validateUser(u_name, u_hash);
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        if (u == null) return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+
+        Article fromArticle = (Article) JSONObject.toBean(articleService.getArticleById(Long.parseLong(from_ar)), Article.class);
+        Article toArticle = (Article) JSONObject.toBean(articleService.getArticleById(Long.parseLong(to_ar)), Article.class);
+        if(fromArticle.getId() == null || toArticle.getId() == null || (!type.equals("RECS_FOR_USER") && !type.equals("RANKING"))) {
+            ret.put("message", "Parameter Error");
+            return new ResponseEntity<>(ret, headers, HttpStatus.OK);
+        }
+        recActionService.track(u, fromArticle, toArticle, u_hash.toString(), type);
         return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 

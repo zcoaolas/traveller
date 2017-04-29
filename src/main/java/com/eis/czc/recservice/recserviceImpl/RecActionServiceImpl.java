@@ -28,9 +28,9 @@ public class RecActionServiceImpl implements RecActionService {
         sb.append("&itemdescription="+"itemdescription");
         sb.append("&itemurl="+"itemurl");
         sb.append("&userid="+u.getId());
-        sb.append("&actioninfo="+getActionInfo(u,a,"view"));
-        JSONObject result = restTemplate.exchange(Parameter.PREFIXREC+"view"+sb.toString(),
-                HttpMethod.GET, null, JSONObject.class).getBody();
+        //sb.append("&actioninfo="+getActionInfo(u,a,"view"));
+        String result = restTemplate.exchange(Parameter.PREFIXREC1+"view"+sb.toString(),
+                HttpMethod.GET, null, String.class).getBody();
         System.out.println(result);
         return true;
     }
@@ -43,9 +43,9 @@ public class RecActionServiceImpl implements RecActionService {
         sb.append("&itemdescription="+"itemdescription");
         sb.append("&itemurl="+"itemurl");
         sb.append("&userid="+u.getId());
-        sb.append("&actioninfo="+getActionInfo(u,a,"buy"));
-        JSONObject result = restTemplate.exchange(Parameter.PREFIXREC+"buy"+sb.toString(),
-                HttpMethod.GET, null, JSONObject.class).getBody();
+        //sb.append("&actioninfo="+"buy");
+        String result = restTemplate.exchange(Parameter.PREFIXREC1+"buy"+sb.toString(),
+                HttpMethod.GET, null, String.class).getBody();
         System.out.println(result);
         return true;
     }
@@ -57,10 +57,10 @@ public class RecActionServiceImpl implements RecActionService {
         sb.append("&sessionid="+sessionId);
         sb.append("&itemfromid="+from.getId());
         sb.append("&itemtoid="+to.getId());
-        sb.append("&rectype"+rectype);
         sb.append("&userid="+u.getId());
-        JSONObject result = restTemplate.exchange(Parameter.PREFIXREC+"track"+sb.toString(),
-                HttpMethod.GET, null, JSONObject.class).getBody();
+        sb.append("&rectype="+rectype);
+        String result = restTemplate.exchange(Parameter.PREFIXREC1+"track"+sb.toString(),
+                HttpMethod.GET, null, String.class).getBody();
         System.out.println(result);
         return true;
 }

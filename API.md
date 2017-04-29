@@ -659,3 +659,70 @@ EVERYONE: articles you wrote
 401 Unauthorized
 {}
 ```
+
+/User/Track?from_ar=1234567&to_ar=7654321&type=RECS_FOR_USER GET
+---
+> Track the action of a user.  
+> type must be only 'RECS_FOR_USER' or 'RANKING'  
+> Headers needed
+
+*success response*
+```
+{}
+```
+
+/Article/MostViewed?number=10&offset=0 GET
+---
+> Get the most viewed articles across the whole site.  
+> Headers needed
+
+*success response*
+```
+{
+  "Article": [
+    {
+      "type": "article",
+      "id": 1493476013991,
+      "ar_content": "上海的5A级景区不多，总共有3家，野生动物园是其中之一。动物园内汇集了世界各地具有代表性的动物和珍稀动物二百余种，地上爬的、天上飞的、水里游的应有尽有，数量上万，其中还有人民大众特别喜爱的长颈鹿",
+      "ar_title": "上海野生动物园",
+      "ar_place": "上海",
+      "ar_category": "自然风光",
+      "ar_like_list": "1493474492312;1492934467233;",
+      "ar_collect_list": "",
+      "ar_read_list": "1492934414312;1493474492312;1493474492312;",
+      "ar_time_list": [
+        {
+          "id": 1493476013456,
+          "ar_time": "2017-04-29 22:26:54.033"
+        }
+      ],
+      "ar_url_list": [],
+      "ar_author": {
+        "id": 1493474492312,
+        "u_name": "liangdong",
+        "u_mail": "dl@sjtu.edu.cn",
+        "u_password": "",
+        "u_role": 1,
+        "u_job": "Farm",
+        "u_gender": 1,
+        "u_age": 20
+      },
+      "ar_reviewer": [],
+      "ar_review_list": [],
+      "ar_tag_list": []
+    }
+  ]
+}
+```
+
+/Article/SimilarRead?aid=1493476013991&number=10&offset=0 GET
+---
+> Get the recommended articles when a user is reading an article.  
+> Headers needed
+
+*success response*
+```
+{
+  "Article": []
+}
+```

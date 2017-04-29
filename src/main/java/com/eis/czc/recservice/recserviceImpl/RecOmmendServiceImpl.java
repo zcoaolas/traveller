@@ -4,6 +4,7 @@ import com.eis.czc.model.Article;
 import com.eis.czc.model.User;
 import com.eis.czc.recservice.RecOmmendService;
 import com.eis.czc.util.Parameter;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -39,6 +40,7 @@ public class RecOmmendServiceImpl implements RecOmmendService {
             ids.add(i.getString("id"));
         return ids;
     }
+
     public List<String> otherUsersStar(String uid, String aid, int numberOfResults, int offset){
         StringBuilder sb = new StringBuilder();
         sb.append("?apikey="+ Parameter.APIKEY);
@@ -69,9 +71,11 @@ public class RecOmmendServiceImpl implements RecOmmendService {
                 HttpMethod.GET, null, JSONObject.class).getBody();
         System.out.println(result);
         List<String> ids = new LinkedList<String>();
-        JSONObject[] recommendedItems = (JSONObject[])result.get("recommendedItems");
-        for( JSONObject i : recommendedItems)
-            ids.add(i.getString("id"));
+        JSONArray recommendedItems = (JSONArray)result.get("recommendedItems");
+        for( Object i : recommendedItems) {
+            JSONObject io = (JSONObject) i;
+            ids.add(io.getString("id"));
+        }
         return ids;
     }
     public List<String> relatedItems(String uid, String aid, int numberOfResults, int offset){
@@ -101,9 +105,11 @@ public class RecOmmendServiceImpl implements RecOmmendService {
                 HttpMethod.GET, null, JSONObject.class).getBody();
         System.out.println(result);
         List<String> ids = new LinkedList<String>();
-        JSONObject[] recommendedItems = (JSONObject[])result.get("recommendedItems");
-        for( JSONObject i : recommendedItems)
-            ids.add(i.getString("id"));
+        JSONArray recommendedItems = (JSONArray)result.get("recommendedItems");
+        for( Object i : recommendedItems) {
+            JSONObject io = (JSONObject) i;
+            ids.add(io.getString("id"));
+        }
         return ids;
     }
 

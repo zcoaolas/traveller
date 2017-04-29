@@ -20,5 +20,5 @@ public interface UserService {
 
     void updateUser(User u);
 
-
+    public void deleteTYZ();
 }

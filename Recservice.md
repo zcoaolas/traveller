@@ -36,7 +36,7 @@ public boolean view(User u, Article a, String sessionId);
 public boolean star(User u, Article a, String sessionId);
 ```
 >When user click a blog from current blog. rectype
-could be "RECS_FOR_USER"(recommendation items) and "RANKINGS" (most viewed or star items).
+could be "RECS_FOR_USER"(recommendation items) and "RANKING" (most viewed or star items).
 ```
 public boolean track(User u, Article from, Article to, String sessionId, String rectype);
 ```

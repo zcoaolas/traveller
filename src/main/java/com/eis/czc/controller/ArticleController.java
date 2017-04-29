@@ -3,6 +3,7 @@ package com.eis.czc.controller;
 import com.eis.czc.model.*;
 import com.eis.czc.recservice.RecActionService;
 import com.eis.czc.recservice.RecArticleService;
+import com.eis.czc.recservice.RecOmmendService;
 import com.eis.czc.service.*;
 import com.eis.czc.util.SystemRole;
 import net.sf.json.JSONArray;
@@ -40,6 +41,8 @@ public class ArticleController {
     private RecArticleService recArticleService;
     @Autowired
     private RecActionService recActionService;
+    @Autowired
+    private RecOmmendService recOmmendService;
 
     private UserPool userPool = UserPool.getInstance();
 
@@ -221,6 +224,46 @@ public class ArticleController {
         JSONObject ret = new JSONObject();
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(ret, addHeaderAttributes(headers), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/Article/MostViewed", method = RequestMethod.GET)
+    public ResponseEntity<JSONObject> mostViewed(@RequestHeader("User-Hash") Integer u_hash,
+                                                 @RequestHeader("Username") String u_name,
+                                                 @RequestParam int number, @RequestParam int offset){
+        User user = userPool.validateUser(u_name, u_hash);
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        if (user == null) return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+
+        List<String> ar_id_list = recOmmendService.mostViewedItems(number, offset);
+        JSONArray recArticles = new JSONArray();
+        for (String idS : ar_id_list){
+            recArticles.add(articleService.getArticleById(Long.parseLong(idS)));
+        }
+        ret.put("Article", recArticles);
+
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/Article/SimilarRead", method = RequestMethod.GET)
+    public ResponseEntity<JSONObject> mostViewed(@RequestHeader("User-Hash") Integer u_hash,
+                                                 @RequestHeader("Username") String u_name,
+                                                 @RequestParam String aid, @RequestParam int number, @RequestParam int offset){
+        User user = userPool.validateUser(u_name, u_hash);
+        JSONObject ret = new JSONObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers = addHeaderAttributes(headers);
+        if (user == null) return new ResponseEntity<>(ret, headers, HttpStatus.UNAUTHORIZED);
+
+        List<String> ar_id_list = recOmmendService.recommandations(user.getId().toString(), aid, number, offset);
+        JSONArray recArticles = new JSONArray();
+        for (String idS : ar_id_list){
+            recArticles.add(articleService.getArticleById(Long.parseLong(idS)));
+        }
+        ret.put("Article", recArticles);
+
+        return new ResponseEntity<>(ret, headers, HttpStatus.OK);
     }
 
 
